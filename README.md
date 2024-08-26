@@ -14,29 +14,43 @@ This document provides the commands to set up a project consisting of a FastAPI 
 
 Create a virtual environment
 
-`python -m venv env`
+```
+python -m venv env
+```
 
 Activate the virtual environment
 
 **macOS/Linux**
 
-`source env/bin/activate`
+```
+source env/bin/activate
+```
 
 **Windows**
 
-`.\env\Scripts\activate`
+```
+.\env\Scripts\activate
+```
+
 
 ### Install Dependencies
 
 Install FastAPI and Uvicorn
 
-`pip install fastapi uvicorn`
+```
+pip install fastapi uvicorn
+```
+
 
 ### Run the FastAPI Server
 
 Run the FastAPI development server
 
-`uvicorn main:app --reload`
+
+```
+uvicorn main:app --reload
+```
+
 
 Replace `main:app` with the appropriate module and application instance name if different.
 
@@ -50,42 +64,31 @@ Make sure you have Node.js and npm installed. You can download them from [nodejs
 
 Create a new React project using Vite
 
-`npm create vite@latest my-react-app --template react`
+```
+npm create vite@latest my-react-app --template react
+```
+
 
 Change into the project directory
 
-`cd my-react-app`
+```
+cd my-react-app
+```
+
 
 ### Install Dependencies
 
 Install the project dependencies
 
-`npm install`
+```
+npm install
+```
+
 
 ### Start the React Development Server
 
 Run the React development server
 
-`npm run dev`
-
-## General Commands
-
-### Generate `requirements.txt` for Python Dependencies
-
-Generate a `requirements.txt` file with all installed packages in the Python environment
-
-`pip freeze > requirements.txt`
-
-### Clean Terminal
-
-Clear the terminal screen
-
-**macOS/Linux**
-
-`clear`
-
-**Windows**
-
-`cls`
-
-This README provides a starting point for setting up both the backend and frontend environments. Ensure that you have the necessary tools and permissions to run these commands.
+```
+npm run dev
+```
