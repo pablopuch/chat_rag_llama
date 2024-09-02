@@ -234,7 +234,7 @@ sqlparse==0.4.4
 stack-data==0.6.2
 starlette==0.37.2
 starlette-admin==0.14.0
-streamlit==1.22.0
+streamlit==1.37.0
 sympy==1.12
 tabulate==0.9.0
 tangled-up-in-unicode==0.2.0
