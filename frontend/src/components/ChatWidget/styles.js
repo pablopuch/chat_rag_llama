@@ -1,19 +1,21 @@
 export const styles = {
     chatWidget: {
         position: "fixed",
-        bottom: "30px", // Aumentado para mayor distancia desde el borde inferior
-        right: "30px",  // Aumentado para mayor distancia desde el borde derecho
         width: "120px", // Ampliado para mayor espacio en el botón
         height: "50px", // Ampliado para mayor visibilidad
-        backgroundColor: "#28a745", // Color verde para un aspecto más fresco
-        borderRadius: "25px", // Bordes más redondeados
         cursor: "pointer",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         color: "white",
-        boxShadow: "0px 4px 8px rgba(0,0,0,0.2)", // Añadida sombra para darle profundidad
-        transition: "background-color 0.3s ease", // Transición suave al hacer hover
+        bottom: "20px",
+        right: "20px",
+        backgroundColor: "#007bff",
+        borderRadius: "50%",
+        width: "60px",
+        height: "60px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        zIndex: 1000,
     },
     chatWidgetText: {
         marginLeft: "10px",
@@ -25,8 +27,8 @@ export const styles = {
         position: "fixed",
         bottom: "90px", // Ajustado para mayor separación con el widget
         right: "30px",
-        width: "350px", // Ampliado para mejor legibilidad
-        height: "450px", // Altura mayor para más contenido
+        width: "500px", // Ampliado para mejor legibilidad
+        height: "700px", // Altura mayor para más contenido
         backgroundColor: "#ffffff",
         borderRadius: "15px", // Bordes más redondeados para un aspecto moderno
         boxShadow: "0px 6px 20px rgba(0,0,0,0.3)", // Sombra más profunda para darle más presencia

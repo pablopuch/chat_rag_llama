@@ -48,7 +48,7 @@ def load_documents(folder_path):
 
 # Dividir el texto en fragmentos
 def split_text(data):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,)
     return text_splitter.split_documents(data)
 
 # Crear el vectorstore a partir de los fragmentos de texto
