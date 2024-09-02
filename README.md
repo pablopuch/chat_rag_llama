@@ -35,24 +35,15 @@ source env/bin/activate
 
 ### Install Dependencies
 
-Install FastAPI and Uvicorn
-
 ```
-pip install fastapi uvicorn
+ pip install -r requirements.txt
 ```
 
-
-### Run the FastAPI Server
-
-Run the FastAPI development server
-
+### Run backend
 
 ```
-uvicorn main:app --reload
+fastapi dev main.py
 ```
-
-
-Replace `main:app` with the appropriate module and application instance name if different.
 
 ## Frontend Setup (React with Vite)
 
