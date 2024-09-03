@@ -1,21 +1,41 @@
-# Project Setup
 
-This document provides the commands to set up a project consisting of a FastAPI backend and a React frontend using Vite.
+# Chat-file
 
-## Table of Contents
+Here are the steps to download and install your document chat with LLM Llama 3.1.
 
-- [Backend Setup (FastAPI)](#backend-setup-fastapi)
-- [Frontend Setup (React with Vite)](#frontend-setup-react-with-vite)
-- [General Commands](#general-commands)
+![Descripción del GIF](resources/chat-llama.gif)
 
-## Backend Setup (FastAPI)
 
-### Create and Activate Virtual Environment
 
+## Installation
+
+Clone repo
+
+```bash
+git clone https://github.com/pablopuch/chat_rag_llama.git
+```
+
+Move to frontend
+
+```bash
+cd frontend/
+```
+
+Installation npm
+
+```bash
+npm install
+```
+
+Move to backend
+
+```bash
+cd backend/
+```
 Create a virtual environment
 
 ```
-python -m venv env
+py -m venv env
 ```
 
 Activate the virtual environment
@@ -32,62 +52,26 @@ source env/bin/activate
 .\env\Scripts\activate
 ```
 
-
-### Install Dependencies
+Install dependencias
 
 ```
  pip install -r requirements.txt
 ```
 
-### Run backend
+Run backend
 
 ```
 fastapi dev main.py
 ```
 
-## Frontend Setup (React with Vite)
-
-### Install Node.js and npm
-
-Make sure you have Node.js and npm installed. You can download them from [nodejs.org](https://nodejs.org/).
-
-### Create the React Project with Vite
-
-Create a new React project using Vite
+Run server ollama
 
 ```
-npm create vite@latest my-react-app --template react
-```
+ollama server
+``` 
 
-
-Change into the project directory
-
-```
-cd my-react-app
-```
-
-
-### Install Dependencies
-
-Install the project dependencies
-
-```
-npm install
-```
-
-
-### Start the React Development Server
-
-Run the React development server
+Run frontend
 
 ```
 npm run dev
 ```
-
-
-<video width="640" height="480" controls>
-  <source src="resources/chat-llama.mp4" type="video/mp4">
-  Tu navegador no soporta la reproducción de videos incrustados.
-</video>
-
-![Descripción del GIF](resources/chat-llama.gif)
