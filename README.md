@@ -92,3 +92,10 @@ Run the React development server
 ```
 npm run dev
 ```
+
+
+<video width="640" height="480" controls>
+  <source src="resources/chat-llama.mp4" type="video/mp4">
+  Tu navegador no soporta la reproducción de videos incrustados.
+</video>
+
