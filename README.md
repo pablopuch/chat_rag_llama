@@ -90,3 +90,4 @@ npm run dev
   Tu navegador no soporta la reproducción de videos incrustados.
 </video>
 
+![Descripción del GIF](resources/chat-llama.gif)
