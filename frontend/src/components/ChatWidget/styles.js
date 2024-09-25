@@ -1,10 +1,6 @@
 export const styles = {
     chatWidget: {
         position: "fixed",
-        width: "120px", // Ampliado para mayor espacio en el botón
-        height: "50px", // Ampliado para mayor visibilidad
-        cursor: "pointer",
-        color: "white",
         bottom: "20px",
         right: "20px",
         backgroundColor: "#007bff",
@@ -16,29 +12,99 @@ export const styles = {
         alignItems: "center",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         zIndex: 1000,
+        transition: "background-color 0.3s ease",
+        cursor: "pointer",
     },
-    chatWidgetText: {
-        marginLeft: "10px",
-        fontWeight: "600", // Font-weight un poco menor para equilibrio visual
-        color: "white",
-        fontSize: "14px", // Tamaño de texto un poco mayor
+    chatWidgetHovered: {
+        backgroundColor: "#0056b3", // Cambio de color al hacer hover para un feedback visual
     },
     modalWindow: {
         position: "fixed",
-        bottom: "90px", // Ajustado para mayor separación con el widget
+        bottom: "90px",
         right: "30px",
-        width: "500px", // Ampliado para mejor legibilidad
-        height: "700px", // Altura mayor para más contenido
+        width: "400px",
+        height: "600px",
         backgroundColor: "#ffffff",
-        borderRadius: "15px", // Bordes más redondeados para un aspecto moderno
-        boxShadow: "0px 6px 20px rgba(0,0,0,0.3)", // Sombra más profunda para darle más presencia
-        padding: "20px", // Padding ampliado para mayor espacio interior
-        transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out", // Añadida transición en el movimiento para un efecto suave
+        borderRadius: "15px",
+        boxShadow: "0px 6px 20px rgba(0,0,0,0.3)",
+        padding: "20px",
+        transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out",
         opacity: "0",
-        transform: "scale(0.95)", // Escalado para suavizar la aparición de la ventana
+        transform: "scale(0.95)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
     },
     modalWindowVisible: {
         opacity: "1",
-        transform: "scale(1)", // Escalado a tamaño normal cuando es visible
+        transform: "scale(1)",
+    },
+    chatHistory: {
+        flex: 1,
+        overflowY: "auto",
+        padding: "10px 0",
+        marginBottom: "10px",
+        scrollbarWidth: "thin", // Estilo de scrollbar para navegadores compatibles
+        scrollbarColor: "#cccccc #f5f5f5",
+    },
+    chatMessage: {
+        display: "flex",
+        marginBottom: "10px",
+    },
+    userMessage: {
+        justifyContent: "flex-end",
+    },
+    botMessage: {
+        justifyContent: "flex-start",
+    },
+    messageBubble: {
+        borderRadius: "20px",
+        padding: "10px 15px",
+        maxWidth: "70%",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        wordBreak: "break-word",
+        fontSize: "14px",
+        lineHeight: "1.4",
+    },
+    userBubble: {
+        backgroundColor: "#007bff",
+        color: "white",
+        borderRadius: "15px 15px 0 15px",
+    },
+    botBubble: {
+        backgroundColor: "#f1f1f1",
+        color: "#333",
+        borderRadius: "15px 15px 15px 0",
+    },
+    inputContainer: {
+        display: "flex",
+        alignItems: "center",
+        padding: "10px 0",
+    },
+    inputField: {
+        flex: 1,
+        padding: "12px 15px",
+        borderRadius: "20px",
+        border: "1px solid #ddd",
+        outline: "none",
+        marginRight: "10px",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        fontSize: "14px",
+    },
+    sendButton: {
+        padding: "10px",
+        borderRadius: "50%",
+        backgroundColor: "#007bff",
+        color: "white",
+        border: "none",
+        cursor: "pointer",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        transition: "background-color 0.3s ease",
+    },
+    sendButtonHovered: {
+        backgroundColor: "#0056b3",
     },
 };

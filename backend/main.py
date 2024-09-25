@@ -1,5 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, UploadFile, HTTPException, Depends
 from typing import List, Dict
 import os
 import shutil
@@ -8,17 +7,20 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
 from langchain import hub
+from sqlalchemy.orm import Session
 from langchain.chains import RetrievalQA
 from langchain.llms import Ollama
 from fastapi.middleware.cors import CORSMiddleware
+from database.database import SessionLocal, Association
+from models.requests import AssociationRequest, QuestionRequest, FileRequest
 
 
 app = FastAPI()
 
-# Permitir CORS para que el frontend en React pueda comunicarse con el backend
+# Permitir CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permitir todos los orígenes, restringir en producción
+    allow_origins=["http://192.168.1.140:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,43 +30,43 @@ api_key = os.getenv('API_KEY')
 if not api_key:
     raise ValueError("API_KEY no está configurada correctamente.")
 
-# Directorio para almacenar archivos PDF cargados
 UPLOAD_DIRECTORY = "uploaded_docs"
-
-# Crear directorio si no existe
 os.makedirs(UPLOAD_DIRECTORY, exist_ok=True)
 
-# Global variable to store the QA chain
 qa_chain = None
 
-# Cargar el contenido de todos los archivos PDF en una carpeta
-def load_documents(folder_path):
-    all_documents = []
-    for filename in os.listdir(folder_path):
-        if filename.endswith('.pdf'):
-            loader = PyPDFLoader(os.path.join(folder_path, filename))
-            all_documents.extend(loader.load())
-    return all_documents
+# Diccionario para asociar preguntas con archivos
+questions_to_files: Dict[str, str] = {}
 
-# Dividir el texto en fragmentos
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+
+def load_document(file_path):
+    loader = PyPDFLoader(file_path)
+    return loader.load()
+
 def split_text(data):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,)
     return text_splitter.split_documents(data)
 
-# Crear el vectorstore a partir de los fragmentos de texto
 def create_vectorstore(splits):
     embeddings = HuggingFaceEmbeddings(model_name='all-MiniLM-L6-v2')
     return Chroma.from_documents(documents=splits, embedding=embeddings)
 
-# Descargar el prompt de RAG
 def load_prompt():
     return hub.pull("llama-rag", api_key=api_key)
 
-# Configurar el modelo de lenguaje Llama3.1 con Ollama
 def configure_llm():
     return Ollama(model="llama3.1:latest", verbose=True)
 
-# Configurar la cadena de preguntas y respuestas con recuperación
 def create_qa_chain(llm, vectorstore, prompt):
     return RetrievalQA.from_chain_type(
         llm=llm,
@@ -72,54 +74,76 @@ def create_qa_chain(llm, vectorstore, prompt):
         chain_type_kwargs={"prompt": prompt}
     )
 
-# Inicializar el sistema: cargar documentos, crear vectorstore y cadena de QA
-def initialize_system():
-    # 1. Cargar documentos desde la carpeta especificada
-    data = load_documents(UPLOAD_DIRECTORY)
-    
-    # 2. Dividir en fragmentos
-    all_splits = split_text(data)
-    
-    # 3. Crear el vectorstore
-    vectorstore = create_vectorstore(all_splits)
-    
-    # 4. Cargar el prompt
+def initialize_system(document):
+    splits = split_text(document)
+    vectorstore = create_vectorstore(splits)
     prompt = load_prompt()
-    
-    # 5. Configurar el LLM
     llm = configure_llm()
-    
-    # 6. Configurar la cadena de QA
     global qa_chain
     qa_chain = create_qa_chain(llm, vectorstore, prompt)
 
-class QuestionRequest(BaseModel):
-    question: str
+
+
+# _______________________________________________________RUTAS___________________________________________________________
 
 @app.post("/upload-docs/")
 async def upload_docs(files: List[UploadFile]):
-    # Guardar los archivos PDF en el directorio
     for file in files:
         file_path = os.path.join(UPLOAD_DIRECTORY, file.filename)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        print(f"File uploaded: {file.filename}")  # Mensaje de depuración
+    return {"message": "Documents uploaded successfully"}
+
+@app.get("/list-docs/")
+async def list_docs():
+    files = [f for f in os.listdir(UPLOAD_DIRECTORY) if os.path.isfile(os.path.join(UPLOAD_DIRECTORY, f))]
+    print(f"Files listed: {files}")  # Mensaje de depuración
+    return {"documents": files}
+
+@app.post("/associate-question/")
+async def associate_question(request: AssociationRequest, db: Session = Depends(get_db)):
+    if not os.path.isfile(os.path.join(UPLOAD_DIRECTORY, request.filename)):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    db_item = db.query(Association).filter(Association.question == request.question).first()
+    if db_item:
+        db_item.filename = request.filename
+    else:
+        db_item = Association(question=request.question, filename=request.filename)
+        db.add(db_item)
     
-    # Re-inicializar el sistema para procesar los nuevos documentos
-    initialize_system()
-    
-    return {"message": "Documents uploaded and processed successfully"}
+    db.commit()
+    return {"message": "Question associated with document successfully"}
+
+@app.get("/list-questions/")
+async def list_questions(db: Session = Depends(get_db)):
+    associations = db.query(Association).all()
+    return {"questions": [{"question": a.question, "file": a.filename} for a in associations]}
+
+@app.post("/process-doc/")
+async def process_doc(request: FileRequest):
+    filename = request.filename
+    file_path = os.path.join(UPLOAD_DIRECTORY, filename)
+
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    document = load_document(file_path)
+    initialize_system(document)
+
+    return {"message": f"Document {filename} processed successfully"}
 
 @app.post("/ask-question/")
 async def ask_question(request: QuestionRequest):
     if qa_chain is None:
         raise HTTPException(status_code=400, detail="System not initialized")
     
-    # Obtener la respuesta a la pregunta usando el QA chain
     result = qa_chain({"query": request.question})
-    
     return {"response": result["result"]}
 
-# Ejecutar el servidor de FastAPI
+
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="192.168.1.140", port=8000)

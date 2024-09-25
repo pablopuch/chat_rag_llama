@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import ChatWidget from './components/ChatWidget'
-import UploadFileComponent from './components/UploadFileComponent/UploadFileComponent'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AdminPage from './page/admin';
+import HomePage from './page/home';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <UploadFileComponent />
-      <ChatWidget />
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/" element={<HomePage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
