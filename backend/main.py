@@ -134,13 +134,47 @@ async def process_doc(request: FileRequest):
 
     return {"message": f"Document {filename} processed successfully"}
 
+
+
+# Diccionario para almacenar el historial del chat
+chat_memory: Dict[str, List[Dict[str, str]]] = {}
+
+def store_interaction(user_id: str, question: str, answer: str):
+    """Almacenar la interacción de un usuario en el historial de conversación."""
+    if user_id not in chat_memory:
+        chat_memory[user_id] = []
+    chat_memory[user_id].append({"question": question, "answer": answer})
+
+def get_chat_history(user_id: str) -> str:
+    """Obtener el historial de conversación de un usuario."""
+    if user_id not in chat_memory:
+        return ""
+    history = chat_memory[user_id]
+    return "\n".join([f"Pregunta: {interaction['question']}\nRespuesta: {interaction['answer']}" for interaction in history])
+
 @app.post("/ask-question/")
 async def ask_question(request: QuestionRequest):
     if qa_chain is None:
         raise HTTPException(status_code=400, detail="System not initialized")
+
+    user_id = request.user_id  # Suponiendo que agregas un user_id en la petición para identificar la sesión del usuario.
     
-    result = qa_chain({"query": request.question})
+    # Recuperar el historial de conversación
+    history = get_chat_history(user_id)
+    
+    # Formatear la pregunta incluyendo el historial de conversación
+    formatted_question = f"Historial:\n{history}\n\nNueva pregunta: {request.question}"
+
+    # Realizar la consulta al modelo
+    result = qa_chain({"query": formatted_question})
+    
+    # Almacenar la nueva interacción
+    store_interaction(user_id, request.question, result["result"])
+
     return {"response": result["result"]}
+
+
+
 
 
 
